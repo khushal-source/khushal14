@@ -1,0 +1,98 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int linear(int arr[], int n, int target) {
+    for (int i = 0; i < n; i++) {
+        if (target == arr[i]) 
+            return i;
+    }
+    return -1;
+}
+
+int binary(int arr[], int n, int target) {
+    int temp;
+
+    // sort the array using bubble sort
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                temp       = arr[j];
+                arr[j]     = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("\nArray elements are: ");
+    for (int i = 0; i < n; i++) {
+        printf(" %d ", arr[i]);
+    }
+
+    int lo = 0;
+    int hi = n - 1;
+
+    while (lo <= hi) {
+        int mid = (lo + hi) / 2;
+        if (arr[mid] == target)
+            return mid;
+        else if (arr[mid] > target)
+            hi = mid - 1;
+        else
+            lo = mid + 1;
+    }
+
+    return -1;
+}
+
+int main() {
+    int n, result, target;
+
+    printf("enter the size of array: ");
+    scanf("%d", &n);
+
+    int arr[n];
+    for (int i = 0; i < n; i++) {
+        printf("enter the elements of array: ");
+        scanf("%d", &arr[i]);
+    }
+
+    while (1) {
+        printf("1 FOR LINEAR SEARCH\n2 FOR BINARY SEARCH\n3 exit\n");
+        int ch;
+        printf("enter your choice: ");
+        scanf("%d", &ch);
+
+        switch (ch) {
+            case 1:
+                printf("enter the target: ");
+                scanf("%d", &target);
+                result = linear(arr, n, target);
+                if (result != -1)
+                    printf("...Hence element found at position %d using linear search\n\n", result);
+                else
+                    printf("element not present\n\n");
+                break;
+
+            case 2:
+                printf("enter the target: ");
+                scanf("%d", &target);
+                result = binary(arr, n, target);
+                if (result != -1)
+                    printf("element found at position %d using binary search\n\n", result);
+                else
+                    printf("element not present\n\n");
+                break;
+
+            case 3:
+                printf("exiting your program\n\n");
+                exit(0);
+
+            default:
+                printf("u have entered wrong choice\n\n");
+                break;
+        }
+    }
+
+    return 0;
+}

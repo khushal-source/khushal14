@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 5
+
+int adj[MAX][MAX];
+char cities[MAX][20] = {"Mumbai", "Delhi", "Chennai", "Kolkata", "Bengaluru"};
+
+void addRoute(int src, int dest) {
+    adj[src][dest] = 1;
+    printf("Flight added from %s to %s\n", cities[src], cities[dest]);
+}
+
+void displayMatrix() {
+    printf("\nAdjacency Matrix:\n     ");
+    for (int i = 0; i < MAX; i++)
+        printf("%-10s", cities[i]);
+    printf("\n");
+
+    for (int i = 0; i < MAX; i++) {
+        printf("%-10s", cities[i]);
+        for (int j = 0; j < MAX; j++)
+            printf("%-10d", adj[i][j]);
+        printf("\n");
+    }
+}
+
+void showRoutes() {
+    printf("\nFlight Routes:\n");
+    for (int i = 0; i < MAX; i++) {
+        for (int j = 0; j < MAX; j++) {
+            if (adj[i][j])
+                printf("%s → %s\n", cities[i], cities[j]);
+        }
+    }
+}
+
+int main() {
+    int choice, src, dest;
+
+    while (1) {
+        printf("\n--- Flight Route Menu ---\n");
+        printf("1. Add Flight Route\n2. Display Adjacency Matrix\n3. Show All Routes\n4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Available Cities:\n");
+                for (int i = 0; i < MAX; i++)
+                    printf("%d. %s\n", i, cities[i]);
+                printf("Enter source city index: ");
+                scanf("%d", &src);
+                printf("Enter destination city index: ");
+                scanf("%d", &dest);
+                if (src >= 0 && src < MAX && dest >= 0 && dest < MAX)
+                    addRoute(src, dest);
+                else
+                    printf("Invalid city index\n");
+                break;
+            case 2:
+                displayMatrix();
+                break;
+            case 3:
+                showRoutes();
+                break;
+            case 4:
+                return 0;
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+}
+
