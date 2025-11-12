@@ -1,0 +1,227 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Node structure
+struct node {
+    int data;
+    char name[20];
+    char designation[20];
+    struct node *next;
+};
+
+// Global heads and tails for 2 lists
+struct node *Head1 = NULL, *tail1 = NULL;
+struct node *Head2 = NULL, *tail2 = NULL;
+
+// Utility: create new node
+struct node* createNode(const char *role) {
+    struct node *temp = (struct node*)malloc(sizeof(struct node));
+    if (!temp) {
+        printf("Memory allocation failed.\n");
+        return NULL;
+    }
+    printf("Enter PRN: ");
+    scanf("%d", &temp->data);
+    printf("Enter Name: ");
+    scanf("%19s", temp->name);
+    if (role) strcpy(temp->designation, role);
+    else strcpy(temp->designation, "Member");
+    temp->next = NULL;
+    return temp;
+}
+
+// Insert at beginning (President)
+void insertAtBeginning(struct node **head, struct node **tail) {
+    struct node *temp = createNode("President");
+    if (!temp) return;
+
+    if (*head == NULL) {
+        *head = *tail = temp;
+    } else {
+        // old president becomes member
+        strcpy((*head)->designation, "Member");
+        temp->next = *head;
+        *head = temp;
+    }
+    printf("President inserted at beginning.\n");
+}
+
+// Insert at end (Secretary)
+void insertAtEnd(struct node **head, struct node **tail) {
+    struct node *temp;
+    if (*head == NULL) {
+        temp = createNode("President");
+        *head = *tail = temp;
+        return;
+    }
+    else if ((*head)->next == NULL) {
+        temp = createNode("Secretary");
+        (*head)->next = temp;
+        *tail = temp;
+    }
+    else {
+        temp = createNode("Secretary");
+        strcpy((*tail)->designation, "Member");
+        (*tail)->next = temp;
+        *tail = temp;
+    }
+    printf("Secretary inserted at end.\n");
+}
+
+// Insert after a given PRN (middle)
+void insertAtMiddle(struct node **head, struct node **tail) {
+    if (*head == NULL) {
+        printf("List empty. Adding as President.\n");
+        insertAtBeginning(head, tail);
+        return;
+    }
+    int key;
+    printf("Enter PRN after which to insert: ");
+    scanf("%d", &key);
+    struct node *ptr = *head;
+    while (ptr && ptr->data != key) {
+        ptr = ptr->next;
+    }
+    if (!ptr) {
+        printf("PRN not found.\n");
+        return;
+    }
+    if (ptr == *tail) {
+        insertAtEnd(head, tail);
+        return;
+    }
+    struct node *temp = createNode("Member");
+    temp->next = ptr->next;
+    ptr->next = temp;
+    printf("Member inserted after PRN %d.\n", key);
+}
+
+// Display list
+void display(struct node *head) {
+    if (!head) {
+        printf("List empty.\n");
+        return;
+    }
+    printf("\nPRN\tName\tDesignation\n");
+    while (head) {
+        printf("%d\t%s\t%s\n", head->data, head->name, head->designation);
+        head = head->next;
+    }
+}
+
+// Delete president
+void deletePresident(struct node **head, struct node **tail) {
+    if (!*head) { printf("List empty.\n"); return; }
+    struct node *temp = *head;
+    if (strcmp(temp->designation, "President") == 0) {
+        *head = temp->next;
+        if (!*head) *tail = NULL;
+        printf("Deleted President: %s\n", temp->name);
+        free(temp);
+    }
+}
+
+// Delete secretary
+void deleteSecretary(struct node **head, struct node **tail) {
+    if (!*head) { printf("List empty.\n"); return; }
+    struct node *temp = *head, *prev = NULL;
+    while (temp->next) { prev = temp; temp = temp->next; }
+    if (strcmp(temp->designation, "Secretary") == 0) {
+        if (prev) prev->next = NULL; else *head = NULL;
+        *tail = prev;
+        printf("Deleted Secretary: %s\n", temp->name);
+        free(temp);
+    }
+}
+
+// Delete member by PRN
+void deleteMember(struct node **head, struct node **tail, int prn) {
+    struct node *temp = *head, *prev = NULL;
+    while (temp) {
+        if (temp->data == prn && strcmp(temp->designation, "Member") == 0) {
+            if (prev) prev->next = temp->next; else *head = temp->next;
+            if (temp == *tail) *tail = prev;
+            printf("Deleted Member: %s\n", temp->name);
+            free(temp);
+            return;
+        }
+        prev = temp;
+        temp = temp->next;
+    }
+    printf("Member with PRN %d not found.\n", prn);
+}
+
+// Count members
+int countMembers(struct node *head) {
+    int c = 0;
+    while (head) {
+        if (strcmp(head->designation, "Member") == 0) c++;
+        head = head->next;
+    }
+    return c;
+}
+
+// Search PRN
+void search(struct node *head, int prn) {
+    while (head) {
+        if (head->data == prn) {
+            printf("Found: %s (%s)\n", head->name, head->designation);
+            return;
+        }
+        head = head->next;
+    }
+    printf("PRN %d not found.\n", prn);
+}
+
+// Concatenate list2 into list1
+void concatenate() {
+    if (!Head2) {
+        printf("Creating second list...\n");
+        insertAtBeginning(&Head2, &tail2);
+        insertAtEnd(&Head2, &tail2);
+    }
+    if (tail1) tail1->next = Head2; else Head1 = Head2;
+    tail1 = tail2;
+    Head2 = tail2 = NULL;
+    printf("Concatenation done.\n");
+}
+
+// Main menu
+int main() {
+    int choice, prn;
+    do {
+        printf("\n--- CLUB MENU ---\n");
+        printf("1. Insert President (Beginning)\n");
+        printf("2. Insert Member (Middle)\n");
+        printf("3. Insert Secretary (End)\n");
+        printf("4. Delete President\n");
+        printf("5. Delete Secretary\n");
+        printf("6. Delete Member\n");
+        printf("7. Count Members\n");
+        printf("8. Concatenate 2nd List\n");
+        printf("9. Search PRN\n");
+        printf("10. Display\n");
+        printf("11. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch(choice) {
+            case 1: insertAtBeginning(&Head1, &tail1); break;
+            case 2: insertAtMiddle(&Head1, &tail1); break;
+            case 3: insertAtEnd(&Head1, &tail1); break;
+            case 4: deletePresident(&Head1, &tail1); break;
+            case 5: deleteSecretary(&Head1, &tail1); break;
+            case 6: printf("Enter PRN to delete: "); scanf("%d", &prn);
+                    deleteMember(&Head1, &tail1, prn); break;
+            case 7: printf("Total Members: %d\n", countMembers(Head1)); break;
+            case 8: concatenate(); break;
+            case 9: printf("Enter PRN to search: "); scanf("%d", &prn);
+                    search(Head1, prn); break;
+            case 10: display(Head1); break;
+            case 11: printf("Exiting.\n"); break;
+            default: printf("Invalid choice.\n");
+        }
+    } while(choice != 11);
+    return 0;
+}

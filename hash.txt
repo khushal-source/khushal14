@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+int count=0;
+
+void quadratic(long int arr[],int n){
+    int op;
+    long int MobileNo;
+    int i=1;
+    do{
+         printf("Enter the Mobile Number");
+        scanf("%ld",&MobileNo);
+        int index=MobileNo%n;
+        if(count<n){
+            while(arr[index]!=-1){
+                index=(index+i*i)%n;
+                i++;
+            }
+            arr[index]=MobileNo;
+            count++;
+        }
+        else{
+            printf("HT is full");
+        }
+        for(int i=0;i<n;i++){
+            printf("\n index at %ld ",arr[i]);
+        }
+        printf("\n");
+        printf("Do u want to add more record press 1...else press 0: ");
+        scanf("%d",&op);
+        //  while(op==1);
+    } while(op==1);
+}
+
+void linear(long int arr[],int n){
+    int op;
+    long int MobileNo;
+
+    for(int i=0;i<n;i++){
+        printf("\nIndex[%d]=%ld",i,arr[i]);
+    }
+    printf("\n");
+    do{
+        printf("Enter the Mobile Number");
+        scanf("%ld",&MobileNo);
+        int index=MobileNo%n;
+        if(count<n){
+            while(arr[index]!=-1){
+                index=(index+1)%n;
+            }
+            arr[index]=MobileNo;
+            count++;
+        }
+        else{
+            printf("HT is full");
+        }
+        for(int i=0;i<n;i++){
+            printf("\nindex at: %ld ",arr[i]);
+        }
+        printf("\n");
+        printf("Do u want to add more record press 1...else press 0: ");
+        scanf("%d",&op);
+        //  while(op==1);
+    } while(op==1);
+    return ;
+
+}
+
+int main(){
+        long int arr[10]={[0 ... 9]=-1};
+        int n;
+        int ch;
+        printf("enter the no of elements you want in Hash Table: ");
+        scanf("%d",&n);
+        for(int i=0;i<n;i++){
+            printf("\nIndex[%d]=%ld",i,arr[i]);
+        }
+        printf("\n");
+        while(1)
+        {
+            printf("1. FOR LINEAR\n2. FOR QUADRATIC SORT\n3. EXIT\n");
+            printf("enter your choice: ");
+        // printf("\n");
+            scanf("%d",&ch);
+            switch(ch){
+        case 1:
+            printf("HASH MAP USING LINEAR METHOD: ");
+            printf("\n");
+            linear(arr,n);
+            break;
+            
+        case 2:
+            printf("HASH MAP USING QUADREATIC: ");
+            printf("\n");
+            quadratic(arr,n);
+            break;
+        
+        case 3:
+            printf("exiting your program\n\n");
+            exit(0);
+            // break;
+        
+        default:
+            printf("u have entered wrong choice\n\n");
+            break;
+    }
+}
+    return 0;
+}

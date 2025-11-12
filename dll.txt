@@ -1,0 +1,154 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define ROWS 10
+#define SEATS 7
+typedef struct Seat
+{
+    int seatNo;
+    int booked;
+    struct Seat *prev, *next;
+} Seat;
+Seat *theater[ROWS];
+void createRow(int r)
+{
+    Seat *head = NULL, *temp = NULL, *newSeat = NULL;
+    for (int i = 1; i <= SEATS; i++)
+    {
+        newSeat =
+            (Seat *)malloc(sizeof(Seat));
+        newSeat->seatNo = i;
+        newSeat->booked = 0;
+        newSeat->prev = newSeat->next =
+            NULL;
+        if (head == NULL)
+        {
+            head = newSeat;
+            temp = newSeat;
+        }
+        else
+        {
+            temp->next =
+                newSeat;
+            newSeat -> prev = temp;
+            temp = newSeat;
+        }
+    }
+    theater[r] = head;
+}
+void displayAvailable()
+{
+printf("\n--- Available Seats in CINEMAX --\n"); 
+for (int r = 0; r < ROWS; r++) { 
+printf("Row %d : ", 
+r+1); Seat *temp = 
+theater[r]; int 
+freeFound = 0; 
+while (temp != NULL) {
+        if (temp->booked == 0)
+        {
+            printf("%d ", temp->seatNo);
+            freeFound = 1;
+        }
+        temp = temp->next; 
+} 
+if (!freeFound) printf("Housefull!"); 
+printf("\n");
+}
+}
+void bookSeat(int row, int seatNo)
+{
+    if (row < 1 || row > ROWS || seatNo < 1 || seatNo > SEATS)
+    {
+        printf("Invalid seat/row selection!\n");
+        return;
+    }
+    Seat *temp = theater[row - 1];
+    while (temp != NULL && temp->seatNo !=
+                               seatNo)
+    {
+        temp = temp->next;
+    }
+    if (temp != NULL)
+    {
+        if (temp->booked ==
+            0)
+        {
+            temp->booked = 1;
+            printf("Seat %d in Row %d successfully booked!\n", seatNo, row);
+        }
+        else
+        {
+            printf("Sorry, Seat %d in Row %d is already taken.\n", seatNo, row);
+        }
+    }
+}
+void cancelSeat(int row, int seatNo)
+{
+    if (row < 1 || row > ROWS || seatNo < 1 || seatNo > SEATS)
+    {
+        printf("Invalid seat/row selection!\n");
+        return;
+    }
+    Seat *temp = theater[row - 1];
+    while (temp != NULL && temp->seatNo !=
+                               seatNo)
+    {
+        temp = temp->next;
+    }
+    if (temp != NULL)
+    {
+        if (temp->booked ==1)
+        {
+            temp->booked = 0;
+printf("Booking of Seat %d in Row %d is cancelled. Amount will be refunded.\n", seatNo); 
+        }
+        else
+        {
+            printf("Seat %d in Row %d was not booked.\n", seatNo, row);
+        }
+    }
+}
+int main()
+{
+    int choice, row, seatNo;
+    for (int i = 0; i < ROWS; i++)
+    {
+        createRow(i);
+    }
+    printf("Welcome to CINEMAX Multiplex Ticket Booking (Pune)\n");
+    while (1)
+    {
+        printf("\n===== MENU =====\n");
+printf("1. Show Available Seats\n"); 
+printf("2. Book a Seat\n"); 
+printf("3. Cancel Booking\n"); 
+printf("4. Exit\n"); 
+printf("Enter your choice: "); 
+scanf("%d", &choice); 
+switch (choice) {
+        case 1:
+            displayAvailable();
+            break;
+        case 2:
+            printf("Enter Row (1-10): ");
+            scanf("%d", &row);
+printf("Enter Seat Number (1-7): "); 
+scanf("%d", &seatNo); 
+bookSeat(row, seatNo); 
+break; 
+case 3: 
+printf("Enter Row (1-10): "); 
+scanf("%d", &row); 
+printf("Enter Seat Number (1-7): ");
+scanf("%d", &seatNo); 
+cancelSeat(row, seatNo); 
+break ; 
+case 4: 
+printf("Thank you for using CINEMAX Booking! Enjoy the show.\n"); exit(0); 
+default: 
+printf("Invalid choice! Try again.\n"); 
+}
+    }
+    return 0;
+}
